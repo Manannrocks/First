@@ -1,0 +1,31 @@
+//SORT1 EXEC PGM=SORT                                 
+//SORTIN  DD DSN=G332137.INPUT.PS,DISP=SHR            
+//SORTOUT DD DSN=&&TEMP,DISP=(NEW,PASS,DELETE)        
+//SYSIN DD *                                          
+   SORT FIELDS=COPY                                   
+   INREC IFTHEN=(WHEN(1,4,CH,EQ,C'TDT='),             
+   BUILD=(1:1,4,5:DATE1)),                            
+   IFTHEN=(WHEN(1,4,CH,EQ,C'FDT='),                   
+   BUILD=(1:1,4,5:DATE1-150)),                        
+   IFTHEN=(WHEN(1,4,CH,EQ,C'PKG='),                   
+   BUILD=(1:1,7,8:DATE1)),                            
+   IFTHEN=(WHEN=NONE,                                 
+   BUILD=(1:1,72))                                    
+/*                                                    
+//SYSOUT   DD SYSOUT=*                                
+//SORT2 EXEC PGM=SORT                                         
+//SORTIN  DD DSN=&&TEMP,DISP=SHR                              
+//SORTOUT DD DSN=G332137.OUTPUT.PS1,                          
+//           DISP=(OLD,CATLG,CATLG)                           
+//SYSIN DD *                                                  
+   SORT FIELDS=COPY                                           
+   INREC IFTHEN=(WHEN(1,4,CH,EQ,C'PKG=',AND,12,2,CH,LE,C'04'),
+   BUILD=(1:1,7,8:C'1*')),                                    
+   IFTHEN=(WHEN(1,4,CH,EQ,C'PKG=',AND,12,2,CH,LE,C'08'),      
+   BUILD=(1:1,7,8:C'2*')),                                    
+   IFTHEN=(WHEN(1,4,CH,EQ,C'PKG=',AND,12,2,CH,LE,C'12'),      
+   BUILD=(1:1,7,8:C'3*')),                                    
+   IFTHEN=(WHEN=NONE,                                         
+   BUILD=(1:1,72))                                            
+/*                                                            
+//SYSOUT   DD SYSOUT=*                                        
